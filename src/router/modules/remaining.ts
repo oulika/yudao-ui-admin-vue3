@@ -267,6 +267,18 @@ const remainingRouter: AppRouteRecordRaw[] = [
         }
       },
       {
+        path: 'system/behavior-records',
+        component: () => import('@/views/yideyifeng/behaviorrecords/index.vue'),
+        name: 'behavior-records',
+        meta: {
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          title: '医德医风记录',
+          activeMenu: '/system/behavior-records'
+        }
+      },
+      {
         path: 'process-instance/detail',
         component: () => import('@/views/bpm/processInstance/detail/index.vue'),
         name: 'BpmProcessInstanceDetail',
