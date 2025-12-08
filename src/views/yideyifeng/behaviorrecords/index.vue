@@ -17,6 +17,15 @@
           class="!w-240px"
         />
       </el-form-item>
+      <el-form-item label="员工姓名" prop="staffName">
+        <el-input
+          v-model="queryParams.staffId"
+          placeholder="请输入员工姓名"
+          clearable
+          @keyup.enter="handleQuery"
+          class="!w-240px"
+        />
+      </el-form-item>
       <el-form-item label="季度" prop="quarter">
         <el-input
           v-model="queryParams.quarter"
@@ -66,15 +75,6 @@
         <el-input
           v-model="queryParams.department"
           placeholder="请输入评审科室"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="图片路径" prop="imagePath">
-        <el-input
-          v-model="queryParams.imagePath"
-          placeholder="请输入图片路径"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
@@ -137,6 +137,7 @@
     <el-table-column type="selection" width="55" />
       <el-table-column label="编号" align="center" prop="id" />
       <el-table-column label="员工ID" align="center" prop="staffId" />
+      <el-table-column label="员工姓名" align="center" prop="staffName" />
       <el-table-column label="季度" align="center" prop="quarter" />
       <el-table-column label="分类" align="center" prop="category" />
       <el-table-column label="条目" align="center" prop="item" />
@@ -190,6 +191,8 @@ import { isEmpty } from '@/utils/is'
 import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
 import { BehaviorRecordsApi, BehaviorRecords } from '@/api/yideyifeng/behaviorrecords'
+import { ScoreStaffApi, ScoreStaff } from '@/api/yideyifeng/scorestaff'
+import { ScoreTemplateApi, ScoreTemplate } from '@/api/yideyifeng/scoretemplate'
 import BehaviorRecordsForm from './BehaviorRecordsForm.vue'
 const route = useRoute()
 /** 行为记录 列表 */
@@ -206,6 +209,7 @@ const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
   staffId: userId,
+  staffName: undefined,
   quarter: undefined,
   category: undefined,
   item: undefined,

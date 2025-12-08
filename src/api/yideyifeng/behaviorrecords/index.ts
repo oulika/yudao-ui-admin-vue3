@@ -5,6 +5,7 @@ import type { Dayjs } from 'dayjs';
 export interface BehaviorRecords {
           id: number; // 编号
           staffId: number; // 员工ID
+          staffName: string; // 员工姓名
           quarter: number; // 季度
           category: string; // 分类
           item: string; // 条目
@@ -24,6 +25,11 @@ export const BehaviorRecordsApi = {
   // 查询行为记录详情
   getBehaviorRecords: async (id: number) => {
     return await request.get({ url: `/yideyifeng/behavior-records/get?id=` + id })
+  },
+
+  // 查询行为记录详情
+  getAllBehaviorRecords: async () => {
+    return await request.get({ url: `/yideyifeng/behavior-records/getAll`})
   },
 
   // 新增行为记录
@@ -50,4 +56,4 @@ export const BehaviorRecordsApi = {
   exportBehaviorRecords: async (params) => {
     return await request.download({ url: `/yideyifeng/behavior-records/export-excel`, params })
   },
-}
+}

@@ -22,6 +22,11 @@ export const ScoreTemplateApi = {
     return await request.get({ url: `/yideyifeng/score-template/get?id=` + id })
   },
 
+  // 查询评分标准详情
+  getAllScoreTemplate: async () => {
+    return await request.get({ url: `/yideyifeng/score-template/getAll`})
+  },
+
   // 新增评分标准
   createScoreTemplate: async (data: ScoreTemplate) => {
     return await request.post({ url: `/yideyifeng/score-template/create`, data })
@@ -46,4 +51,4 @@ export const ScoreTemplateApi = {
   exportScoreTemplate: async (params) => {
     return await request.download({ url: `/yideyifeng/score-template/export-excel`, params })
   },
-}
+}

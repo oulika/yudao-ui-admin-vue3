@@ -22,6 +22,11 @@ export const ScoreStaffApi = {
     return await request.get({ url: `/yideyifeng/score-staff/get?id=` + id })
   },
 
+  // 查询所有员工信息
+  getAllScoreStaff: async () => {
+    return await request.get({ url: `/yideyifeng/score-staff/getAll`})
+  },
+
   // 新增员工信息
   createScoreStaff: async (data: ScoreStaff) => {
     return await request.post({ url: `/yideyifeng/score-staff/create`, data })
@@ -46,4 +51,4 @@ export const ScoreStaffApi = {
   exportScoreStaff: async (params) => {
     return await request.download({ url: `/yideyifeng/score-staff/export-excel`, params })
   },
-}
+}

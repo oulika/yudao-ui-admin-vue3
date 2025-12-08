@@ -7,17 +7,53 @@
       label-width="100px"
       v-loading="formLoading"
     >
+
       <el-form-item label="员工ID" prop="staffId">
-        <el-input v-model="formData.staffId" placeholder="请输入员工ID" />
+        <el-select v-model="formData.modelId" placeholder="请选择员工">
+          <el-option
+            v-for="staff in staffs"
+            :key="staff.id"
+            :label="staff.name"
+            :value="staff.id"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="季度" prop="quarter">
-        <el-input v-model="formData.quarter" placeholder="请输入季度" />
+        <el-select v-model="formData.quarter" placeholder="请选择季度">
+          <el-option label="第一季度" value="1" />
+          <el-option label="第二季度" value="2" />
+          <el-option label="第三季度" value="3" />
+          <el-option label="第四季度" value="4" />
+        </el-select>
       </el-form-item>
       <el-form-item label="分类" prop="category">
-        <el-input v-model="formData.category" placeholder="请输入分类" />
+        <el-select v-model="formData.category" placeholder="请选择分类">
+          <el-option
+            v-for="category in categories"
+            :key="category"
+            :label="category"
+            :value="category"
+            @change="handleCategoryChange"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="条目" prop="item">
-        <el-input v-model="formData.item" placeholder="请输入条目" />
+        <el-select
+          v-model="formData.item"
+          placeholder="请选择项目"
+          clearable
+          filterable
+          :disabled="!formData.category"
+          @change="handleItemChange"
+          class="full-width"
+        >
+          <el-option
+            v-for="item in filteredItems"
+            :key="item.id"
+            :label="item.item"
+            :value="item.id"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="分值" prop="points">
         <el-input v-model="formData.points" placeholder="请输入分值" />
@@ -28,8 +64,8 @@
       <el-form-item label="评审科室" prop="department">
         <el-input v-model="formData.department" placeholder="请输入评审科室" />
       </el-form-item>
-      <el-form-item label="图片路径" prop="imagePath">
-        <el-input v-model="formData.imagePath" placeholder="请输入图片路径" />
+      <el-form-item label="附件" prop="fileUrl">
+        <UploadFile :is-show-tip="false" v-model="formData.imagePath" :limit="3" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -39,8 +75,11 @@
   </Dialog>
 </template>
 <script setup lang="ts">
+
 import { BehaviorRecordsApi, BehaviorRecords } from '@/api/yideyifeng/behaviorrecords'
 
+import { ScoreStaffApi, ScoreStaff } from '@/api/yideyifeng/scorestaff'
+import { ScoreTemplateApi, ScoreTemplate } from '@/api/yideyifeng/scoretemplate'
 /** 行为记录 表单 */
 defineOptions({ name: 'BehaviorRecordsForm' })
 
@@ -65,13 +104,40 @@ const formData = ref({
 const formRules = reactive({
 })
 const formRef = ref() // 表单 Ref
+const staffs = ref<ScoreStaff[]>([]) // 人员列表的数据
+const templates = ref<ScoreTemplate[]>([]) // 人员列表的数据
+const selectedTemplate = ref<ScoreTemplate | null>(null)
+let categories = []
 
+
+const handleCategoryChange = (category: string) => {
+  if (category) {
+    formData.item = null
+    selectedTemplate.value = null
+  }
+};
+
+const handleItemChange = (itemId: number) => {
+  if (itemId) {
+    const template = filteredItems.value.find(item => item.id === itemId)
+    if (template) {
+      selectedTemplate.value = template
+    }
+  } else {
+    selectedTemplate.value = null
+  }
+};
 /** 打开弹窗 */
 const open = async (type: string, id?: number) => {
   dialogVisible.value = true
   dialogTitle.value = t('action.' + type)
   formType.value = type
+  staffs.value = await ScoreStaffApi.getAllScoreStaff()
+  templates.value = await ScoreTemplateApi.getAllScoreTemplate()
+  categories = templates.value.map(t => t.category).re
+
   resetForm()
+
   // 修改时，设置数据
   if (id) {
     formLoading.value = true
