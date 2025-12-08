@@ -29,10 +29,10 @@
       <el-form-item label="分类" prop="category">
         <el-select v-model="formData.category" placeholder="请选择分类">
           <el-option
-            v-for="category in categories"
-            :key="category"
-            :label="category"
-            :value="category"
+            v-for="category in templateOptions"
+            :key="category.value"
+            :label="category.label"
+            :value="category.value"
             @change="handleCategoryChange"
           />
         </el-select>
@@ -48,7 +48,7 @@
           class="full-width"
         >
           <el-option
-            v-for="item in filteredItems"
+            v-for="item in itemOptions"
             :key="item.id"
             :label="item.item"
             :value="item.id"
@@ -83,6 +83,13 @@ import { ScoreTemplateApi, ScoreTemplate } from '@/api/yideyifeng/scoretemplate'
 /** 行为记录 表单 */
 defineOptions({ name: 'BehaviorRecordsForm' })
 
+
+interface CategoryTemplate {
+  label: string;       // 模板名称
+  value: string;       // 模板值
+  items: ScoreTemplate[];  // 对应的项目列表
+}
+
 const { t } = useI18n() // 国际化
 const message = useMessage() // 消息弹窗
 
@@ -106,9 +113,11 @@ const formRules = reactive({
 const formRef = ref() // 表单 Ref
 const staffs = ref<ScoreStaff[]>([]) // 人员列表的数据
 const templates = ref<ScoreTemplate[]>([]) // 人员列表的数据
-const selectedTemplate = ref<ScoreTemplate | null>(null)
-let categories = []
-
+// const categories = ref<
+const rawData = ref<ScoreTemplate[]>([])
+// 响应式数据
+const selectedTemplate: Ref<string> = ref('')
+const selectedItem: Ref<number | null> = ref(null)
 
 const handleCategoryChange = (category: string) => {
   if (category) {
@@ -117,11 +126,39 @@ const handleCategoryChange = (category: string) => {
   }
 };
 
+// 计算属性：提取所有唯一的模板
+const templateOptions = computed(() => {
+  const templates = new Map<string, CategoryTemplate>()
+
+  rawData.value.forEach(item => {
+    if (!templates.has(item.category)) {
+      templates.set(item.category, {
+        label: item.category,
+        value: item.category,
+        items: []
+      })
+    }
+    templates.get(item.category)!.items.push(item)
+  })
+
+  return Array.from(templates.values())
+})
+
+// 计算属性：当前选中模板对应的项目列表
+const itemOptions = computed(() => {
+  if (!formData.value.category) return []
+
+  const template = templateOptions.value.find(t => t.value === formData.value.category)
+  return template ? template.items : []
+})
+
 const handleItemChange = (itemId: number) => {
   if (itemId) {
-    const template = filteredItems.value.find(item => item.id === itemId)
+    const template = itemOptions.value.find(item => item.id === itemId)
     if (template) {
-      selectedTemplate.value = template
+      formData.value.points=template.points
+      formData.value.department=template.department
+      formData.value.remark=template.remark
     }
   } else {
     selectedTemplate.value = null
@@ -134,7 +171,8 @@ const open = async (type: string, id?: number) => {
   formType.value = type
   staffs.value = await ScoreStaffApi.getAllScoreStaff()
   templates.value = await ScoreTemplateApi.getAllScoreTemplate()
-  categories = templates.value.map(t => t.category).re
+  rawData.value = templates.value
+
 
   resetForm()
 
