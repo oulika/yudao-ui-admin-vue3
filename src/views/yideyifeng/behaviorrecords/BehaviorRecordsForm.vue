@@ -9,12 +9,13 @@
     >
 
       <el-form-item label="员工ID" prop="staffId">
-        <el-select v-model="formData.modelId" placeholder="请选择员工">
+        <el-select v-model="formData.staffId" placeholder="请选择员工" @change="handleStaffChange">
           <el-option
             v-for="staff in staffs"
             :key="staff.id"
             :label="staff.name"
             :value="staff.id"
+
           />
         </el-select>
       </el-form-item>
@@ -100,6 +101,7 @@ const formType = ref('') // 表单的类型：create - 新增；update - 修改
 const formData = ref({
   id: undefined,
   staffId: undefined,
+  staffName: undefined,
   quarter: undefined,
   category: undefined,
   item: undefined,
@@ -125,6 +127,12 @@ const handleCategoryChange = (category: string) => {
     selectedTemplate.value = null
   }
 };
+
+const handleStaffChange = (staffId: number) =>{
+  const staff = staffs.value.find(t => t.id === formData.value.staffId)
+  formData.value.staffName=staff.name
+
+}
 
 // 计算属性：提取所有唯一的模板
 const templateOptions = computed(() => {
@@ -159,6 +167,7 @@ const handleItemChange = (itemId: number) => {
       formData.value.points=template.points
       formData.value.department=template.department
       formData.value.remark=template.remark
+      formData.value.category=template.category
     }
   } else {
     selectedTemplate.value = null

@@ -19,7 +19,7 @@
       </el-form-item>
       <el-form-item label="员工姓名" prop="staffName">
         <el-input
-          v-model="queryParams.staffId"
+          v-model="queryParams.staffName"
           placeholder="请输入员工姓名"
           clearable
           @keyup.enter="handleQuery"
