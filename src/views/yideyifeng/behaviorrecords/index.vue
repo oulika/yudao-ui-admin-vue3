@@ -138,6 +138,7 @@
       <el-table-column label="编号" align="center" prop="id" />
       <el-table-column label="员工ID" align="center" prop="staffId" />
       <el-table-column label="员工姓名" align="center" prop="staffName" />
+      <el-table-column label="年度" align="center" prop="year" />
       <el-table-column label="季度" align="center" prop="quarter" />
       <el-table-column label="分类" align="center" prop="category" />
       <el-table-column label="条目" align="center" prop="item" />
@@ -154,14 +155,14 @@
       />
       <el-table-column label="操作" align="center" min-width="120px">
         <template #default="scope">
-          <el-button
-            link
-            type="primary"
-            @click="openForm('update', scope.row.id)"
-            v-hasPermi="['yideyifeng:behavior-records:update']"
-          >
-            编辑
-          </el-button>
+<!--          <el-button-->
+<!--            link-->
+<!--            type="primary"-->
+<!--            @click="openForm('update', scope.row.id)"-->
+<!--            v-hasPermi="['yideyifeng:behavior-records:update']"-->
+<!--          >-->
+<!--            编辑-->
+<!--          </el-button>-->
           <el-button
             link
             type="danger"
@@ -211,6 +212,7 @@ const queryParams = reactive({
   staffId: userId,
   staffName: undefined,
   quarter: undefined,
+  year: undefined,
   category: undefined,
   item: undefined,
   points: undefined,
@@ -287,6 +289,7 @@ const handleRowCheckboxChange = (records: BehaviorRecords[]) => {
 const handleExport = async () => {
   try {
     // 导出的二次确认
+    message.confirm()
     await message.exportConfirm()
     // 发起导出
     exportLoading.value = true

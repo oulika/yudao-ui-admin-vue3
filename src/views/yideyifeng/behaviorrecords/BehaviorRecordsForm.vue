@@ -19,6 +19,14 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="年度" prop="year">
+        <el-select v-model="formData.year" placeholder="请选择季度">
+          <el-option label="2024年度" value="2024" />
+          <el-option label="2025年度" value="2025" />
+          <el-option label="2026年度" value="2026" />
+          <el-option label="2027年度" value="2027" />
+        </el-select>
+      </el-form-item>
       <el-form-item label="季度" prop="quarter">
         <el-select v-model="formData.quarter" placeholder="请选择季度">
           <el-option label="第一季度" value="1" />
@@ -103,6 +111,7 @@ const formData = ref({
   staffId: undefined,
   staffName: undefined,
   quarter: undefined,
+  year: undefined,
   category: undefined,
   item: undefined,
   points: undefined,

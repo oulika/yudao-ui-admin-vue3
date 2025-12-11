@@ -6,6 +6,7 @@ export interface BehaviorRecords {
           id: number; // 编号
           staffId: number; // 员工ID
           staffName: string; // 员工姓名
+          year: number; // 年度
           quarter: number; // 季度
           category: string; // 分类
           item: string; // 条目
