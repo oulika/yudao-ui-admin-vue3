@@ -105,7 +105,7 @@
         <el-button
           type="success"
           plain
-          @click="handleExport"
+          @click="dialogVisible=true"
           :loading="exportLoading"
           v-hasPermi="['yideyifeng:behavior-records:export']"
         >
@@ -183,6 +183,26 @@
     />
   </ContentWrap>
 
+  <el-dialog
+    v-model="dialogVisible"
+    title="选择年度"
+    width="500"
+    :before-close="handleClose"
+  >
+    <el-date-picker
+      v-model="exportYear"
+      type="year"
+      placeholder="选择年度"
+    />
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleExport">
+          确定
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
   <!-- 表单弹窗：添加/修改 -->
   <BehaviorRecordsForm ref="formRef" @success="getList" />
 </template>
@@ -199,6 +219,8 @@ const route = useRoute()
 /** 行为记录 列表 */
 defineOptions({ name: 'BehaviorRecords' })
 
+const dialogVisible = ref(false)
+const exportYear = ref(2025)
 const message = useMessage() // 消息弹窗
 const { t } = useI18n() // 国际化
 
@@ -289,10 +311,10 @@ const handleRowCheckboxChange = (records: BehaviorRecords[]) => {
 const handleExport = async () => {
   try {
     // 导出的二次确认
-    message.confirm()
-    await message.exportConfirm()
+    dialogVisible.value = false
     // 发起导出
     exportLoading.value = true
+    queryParams.year = exportYear.value
     const data = await BehaviorRecordsApi.exportBehaviorRecords(queryParams)
     download.excel(data, '行为记录.xls')
   } catch {
