@@ -51,16 +51,16 @@
           >
             <!-- 账号登录 -->
             <LoginForm class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />
-            <!-- 手机登录 -->
-            <MobileForm class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />
-            <!-- 二维码登录 -->
-            <QrCodeForm class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />
-            <!-- 注册 -->
-            <RegisterForm class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />
-            <!-- 三方登录 -->
-            <SSOLoginVue class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />
-            <!-- 忘记密码 -->
-            <ForgetPasswordForm class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />
+<!--            &lt;!&ndash; 手机登录 &ndash;&gt;-->
+<!--            <MobileForm class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />-->
+<!--            &lt;!&ndash; 二维码登录 &ndash;&gt;-->
+<!--            <QrCodeForm class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />-->
+<!--            &lt;!&ndash; 注册 &ndash;&gt;-->
+<!--            <RegisterForm class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />-->
+<!--            &lt;!&ndash; 三方登录 &ndash;&gt;-->
+<!--            <SSOLoginVue class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />-->
+<!--            &lt;!&ndash; 忘记密码 &ndash;&gt;-->
+<!--            <ForgetPasswordForm class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />-->
           </div>
         </Transition>
       </div>
