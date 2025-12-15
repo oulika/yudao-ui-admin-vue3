@@ -190,9 +190,10 @@
     :before-close="handleClose"
   >
     <el-date-picker
-      v-model="exportYear"
+      v-model="pickYear"
       type="year"
       placeholder="选择年度"
+      @change="changeYear"
     />
     <template #footer>
       <div class="dialog-footer">
@@ -221,6 +222,8 @@ defineOptions({ name: 'BehaviorRecords' })
 
 const dialogVisible = ref(false)
 const exportYear = ref(2025)
+const pickYear = ref()
+
 const message = useMessage() // 消息弹窗
 const { t } = useI18n() // 国际化
 
@@ -228,6 +231,9 @@ const loading = ref(true) // 列表的加载中
 const list = ref<BehaviorRecords[]>([]) // 列表的数据
 const total = ref(0) // 列表的总页数
 let userId=route.query.uid;
+const changeYear = ()=>{
+  exportYear.value= pickYear.value.getFullYear()
+}
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,

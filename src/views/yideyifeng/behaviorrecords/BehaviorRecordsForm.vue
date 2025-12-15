@@ -21,9 +21,10 @@
       </el-form-item>
       <el-form-item label="年度" prop="year">
         <el-date-picker
-          v-model="formData.year"
+          v-model="pickYear"
           type="year"
           placeholder="选择年度"
+          @change="changeYear"
         />
       </el-form-item>
       <el-form-item label="季度" prop="quarter">
@@ -57,9 +58,9 @@
         >
           <el-option
             v-for="item in itemOptions"
-            :key="item.id"
+            :key="item.item"
             :label="item.item"
-            :value="item.id"
+            :value="item.item"
           />
         </el-select>
       </el-form-item>
@@ -105,6 +106,7 @@ const dialogVisible = ref(false) // 弹窗的是否展示
 const dialogTitle = ref('') // 弹窗的标题
 const formLoading = ref(false) // 表单的加载中：1）修改时的数据加载；2）提交的按钮禁用
 const formType = ref('') // 表单的类型：create - 新增；update - 修改
+const pickYear = ref({})
 const formData = ref({
   id: undefined,
   staffId: undefined,
@@ -118,6 +120,10 @@ const formData = ref({
   department: undefined,
   imagePath: undefined,
 })
+
+const changeYear = ()=>{
+  formData.value.year= pickYear.value.getFullYear()
+}
 const formRules = reactive({
 })
 const formRef = ref() // 表单 Ref
@@ -127,7 +133,6 @@ const templates = ref<ScoreTemplate[]>([]) // 人员列表的数据
 const rawData = ref<ScoreTemplate[]>([])
 // 响应式数据
 const selectedTemplate: Ref<string> = ref('')
-const selectedItem: Ref<number | null> = ref(null)
 
 const handleCategoryChange = (category: string) => {
   if (category) {
@@ -168,9 +173,9 @@ const itemOptions = computed(() => {
   return template ? template.items : []
 })
 
-const handleItemChange = (itemId: number) => {
-  if (itemId) {
-    const template = itemOptions.value.find(item => item.id === itemId)
+const handleItemChange = (value: number) => {
+  if (value) {
+    const template = itemOptions.value.find(item => item.item === value)
     if (template) {
       formData.value.points=template.points
       formData.value.department=template.department
@@ -192,7 +197,7 @@ const open = async (type: string, id?: number) => {
 
 
   resetForm()
-
+  formData.value.year=2025
   // 修改时，设置数据
   if (id) {
     formLoading.value = true
