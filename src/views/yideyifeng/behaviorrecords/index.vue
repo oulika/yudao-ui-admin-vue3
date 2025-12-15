@@ -145,7 +145,13 @@
       <el-table-column label="分值" align="center" prop="points" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="评审科室" align="center" prop="department" />
-      <el-table-column label="图片路径" align="center" prop="imagePath" />
+      <el-table-column label="文件路径" align="center" prop="imagePath">
+
+        <template v-slot="scope">
+          <a :href="scope.row.imagePath" target="_blank" class="buttonText" style="text-decoration: none;color:#409eff">{{scope.row.imagePath}}</a>
+        </template>
+
+      </el-table-column>
       <el-table-column
         label="创建时间"
         align="center"

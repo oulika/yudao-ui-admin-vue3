@@ -9,7 +9,7 @@
     >
 
       <el-form-item label="员工ID" prop="staffId">
-        <el-select v-model="formData.staffId" placeholder="请选择员工" @change="handleStaffChange">
+        <el-select filterable v-model="formData.staffId" placeholder="请选择员工" @change="handleStaffChange">
           <el-option
             v-for="staff in staffs"
             :key="staff.id"
