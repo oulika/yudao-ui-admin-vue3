@@ -191,7 +191,7 @@
 
   <el-dialog
     v-model="dialogVisible"
-    title="选择年度"
+    title="选择具体信息"
     width="500"
     :before-close="handleClose"
   >
@@ -201,6 +201,15 @@
       placeholder="选择年度"
       @change="changeYear"
     />
+    <el-select filterable v-model="exportDept" placeholder="请选择科室">
+      <el-option
+        v-for="dept in uniqueDept"
+        :key="dept"
+        :label="dept"
+        :value="dept"
+
+      />
+    </el-select>
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="dialogVisible = false">取消</el-button>
@@ -228,6 +237,7 @@ defineOptions({ name: 'BehaviorRecords' })
 
 const dialogVisible = ref(false)
 const exportYear = ref(2025)
+const exportDept = ref('药剂科')
 const pickYear = ref()
 
 const message = useMessage() // 消息弹窗
@@ -237,9 +247,23 @@ const loading = ref(true) // 列表的加载中
 const list = ref<BehaviorRecords[]>([]) // 列表的数据
 const total = ref(0) // 列表的总页数
 let userId=route.query.uid;
+const staffs = ref<ScoreStaff[]>([]) // 人员列表的数据
+
+const uniqueDept = computed(() => {
+  return Array.from(
+    new Set(staffs.value.map(staff => staff.department))
+  )
+})
+
 const changeYear = ()=>{
   exportYear.value= pickYear.value.getFullYear()
 }
+//
+// const changeDept = ()=>{
+//   exportDept.value= pickYear.value.getFullYear()
+// }
+
+
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
@@ -263,6 +287,8 @@ const getList = async () => {
   loading.value = true
   try {
     const data = await BehaviorRecordsApi.getBehaviorRecordsPage(queryParams)
+    staffs.value = await ScoreStaffApi.getAllScoreStaff()
+
     list.value = data.list
     total.value = data.total
   } finally {
@@ -327,8 +353,9 @@ const handleExport = async () => {
     // 发起导出
     exportLoading.value = true
     queryParams.year = exportYear.value
+    queryParams.department = exportDept.value
     const data = await BehaviorRecordsApi.exportBehaviorRecords(queryParams)
-    download.excel(data, '行为记录.xls')
+    download.excel(data, exportYear.value + '年度'+ exportDept.value + '医德医风统计数据' + '.xlsx')
   } catch {
   } finally {
     exportLoading.value = false
