@@ -237,7 +237,7 @@ defineOptions({ name: 'BehaviorRecords' })
 
 const dialogVisible = ref(false)
 const exportYear = ref(2025)
-const exportDept = ref('药剂科')
+const exportDept = ref('')
 const pickYear = ref()
 
 const message = useMessage() // 消息弹窗
