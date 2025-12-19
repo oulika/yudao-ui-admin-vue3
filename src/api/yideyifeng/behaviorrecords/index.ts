@@ -55,6 +55,6 @@ export const BehaviorRecordsApi = {
 
   // 导出行为记录 Excel
   exportBehaviorRecords: async (params) => {
-    return await request.download({ url: `/yideyifeng/behavior-records/export-excel-dept`, params })
+    return await request.download({ url: `/yideyifeng/behavior-records/export/export-excel-dept`, params })
   },
 }
