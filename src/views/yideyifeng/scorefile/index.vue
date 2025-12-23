@@ -8,55 +8,10 @@
       :inline="true"
       label-width="68px"
     >
-      <el-form-item label="员工ID" prop="staffId">
-        <el-input
-          v-model="queryParams.staffId"
-          placeholder="请输入员工ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="员工姓名" prop="staffName">
-        <el-input
-          v-model="queryParams.staffName"
-          placeholder="请输入员工姓名"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
       <el-form-item label="季度" prop="quarter">
         <el-input
           v-model="queryParams.quarter"
           placeholder="请输入季度"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="分类" prop="category">
-        <el-input
-          v-model="queryParams.category"
-          placeholder="请输入分类"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="条目" prop="item">
-        <el-input
-          v-model="queryParams.item"
-          placeholder="请输入条目"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="分值" prop="points">
-        <el-input
-          v-model="queryParams.points"
-          placeholder="请输入分值"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
@@ -80,6 +35,15 @@
           class="!w-240px"
         />
       </el-form-item>
+      <el-form-item label="文件路径" prop="filePath">
+        <el-input
+          v-model="queryParams.filePath"
+          placeholder="请输入文件路径"
+          clearable
+          @keyup.enter="handleQuery"
+          class="!w-240px"
+        />
+      </el-form-item>
       <el-form-item label="创建时间" prop="createTime">
         <el-date-picker
           v-model="queryParams.createTime"
@@ -91,6 +55,15 @@
           class="!w-220px"
         />
       </el-form-item>
+      <el-form-item label="年度" prop="year">
+        <el-input
+          v-model="queryParams.year"
+          placeholder="请输入年度"
+          clearable
+          @keyup.enter="handleQuery"
+          class="!w-240px"
+        />
+      </el-form-item>
       <el-form-item>
         <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
         <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
@@ -98,16 +71,16 @@
           type="primary"
           plain
           @click="openForm('create')"
-          v-hasPermi="['yideyifeng:behavior-records:create']"
+          v-hasPermi="['yideyifeng:score-file:create']"
         >
           <Icon icon="ep:plus" class="mr-5px" /> 新增
         </el-button>
         <el-button
           type="success"
           plain
-          @click="dialogVisible=true"
+          @click="handleExport"
           :loading="exportLoading"
-          v-hasPermi="['yideyifeng:behavior-records:export']"
+          v-hasPermi="['yideyifeng:score-file:export']"
         >
           <Icon icon="ep:download" class="mr-5px" /> 导出
         </el-button>
@@ -116,7 +89,7 @@
             plain
             :disabled="isEmpty(checkedIds)"
             @click="handleDeleteBatch"
-            v-hasPermi="['yideyifeng:behavior-records:delete']"
+            v-hasPermi="['yideyifeng:score-file:delete']"
         >
           <Icon icon="ep:delete" class="mr-5px" /> 批量删除
         </el-button>
@@ -136,19 +109,13 @@
     >
     <el-table-column type="selection" width="55" />
       <el-table-column label="编号" align="center" prop="id" />
-      <el-table-column label="员工ID" align="center" prop="staffId" />
-      <el-table-column label="员工姓名" align="center" prop="staffName" />
-      <el-table-column label="年度" align="center" prop="year" />
       <el-table-column label="季度" align="center" prop="quarter" />
-      <el-table-column label="分类" align="center" prop="category" />
-      <el-table-column label="条目" align="center" prop="item" />
-      <el-table-column label="分值" align="center" prop="points" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="评审科室" align="center" prop="department" />
-      <el-table-column label="文件路径" align="center" prop="imagePath">
+      <el-table-column label="文件路径" align="center" prop="filePath">
 
         <template v-slot="scope">
-          <a :href="scope.row.imagePath" target="_blank" class="buttonText" style="text-decoration: none;color:#409eff">{{scope.row.imagePath}}</a>
+          <a :href="scope.row.filePath" target="_blank" class="buttonText" style="text-decoration: none;color:#409eff">{{scope.row.filePath}}</a>
         </template>
 
       </el-table-column>
@@ -159,21 +126,22 @@
         :formatter="dateFormatter"
         width="180px"
       />
+      <el-table-column label="年度" align="center" prop="year" />
       <el-table-column label="操作" align="center" min-width="120px">
         <template #default="scope">
-<!--          <el-button-->
-<!--            link-->
-<!--            type="primary"-->
-<!--            @click="openForm('update', scope.row.id)"-->
-<!--            v-hasPermi="['yideyifeng:behavior-records:update']"-->
-<!--          >-->
-<!--            编辑-->
-<!--          </el-button>-->
+          <el-button
+            link
+            type="primary"
+            @click="openForm('update', scope.row.id)"
+            v-hasPermi="['yideyifeng:score-file:update']"
+          >
+            编辑
+          </el-button>
           <el-button
             link
             type="danger"
             @click="handleDelete(scope.row.id)"
-            v-hasPermi="['yideyifeng:behavior-records:delete']"
+            v-hasPermi="['yideyifeng:score-file:delete']"
           >
             删除
           </el-button>
@@ -189,105 +157,35 @@
     />
   </ContentWrap>
 
-  <el-dialog
-    v-model="dialogVisible"
-    title="选择具体信息"
-    width="500"
-    :before-close="handleClose"
-  >
-    <el-row>
-      <el-col :span="12">
-        <el-date-picker
-        v-model="pickYear"
-        type="year"
-        placeholder="选择年度"
-        @change="changeYear"
-
-      />
-      </el-col>
-      <el-col :span="12">
-        <el-select filterable v-model="exportDept" placeholder="请选择科室">
-          <el-option
-            v-for="dept in uniqueDept"
-            :key="dept"
-            :label="dept"
-            :value="dept"
-
-          />
-        </el-select>
-      </el-col>
-
-    </el-row>
-
-
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleExport">
-          确定
-        </el-button>
-      </div>
-    </template>
-  </el-dialog>
   <!-- 表单弹窗：添加/修改 -->
-  <BehaviorRecordsForm ref="formRef" @success="getList" />
+  <ScoreFileForm ref="formRef" @success="getList" />
 </template>
 
 <script setup lang="ts">
 import { isEmpty } from '@/utils/is'
 import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
-import { BehaviorRecordsApi, BehaviorRecords } from '@/api/yideyifeng/behaviorrecords'
-import { ScoreStaffApi, ScoreStaff } from '@/api/yideyifeng/scorestaff'
-import { ScoreTemplateApi, ScoreTemplate } from '@/api/yideyifeng/scoretemplate'
-import BehaviorRecordsForm from './BehaviorRecordsForm.vue'
-const route = useRoute()
-/** 行为记录 列表 */
-defineOptions({ name: 'BehaviorRecords' })
+import { ScoreFileApi, ScoreFile } from '@/api/yideyifeng/scorefile'
+import ScoreFileForm from './ScoreFileForm.vue'
 
-const dialogVisible = ref(false)
-const exportYear = ref(2025)
-const exportDept = ref('')
-const pickYear = ref()
+/** 文件记录 列表 */
+defineOptions({ name: 'ScoreFile' })
 
 const message = useMessage() // 消息弹窗
 const { t } = useI18n() // 国际化
 
 const loading = ref(true) // 列表的加载中
-const list = ref<BehaviorRecords[]>([]) // 列表的数据
+const list = ref<ScoreFile[]>([]) // 列表的数据
 const total = ref(0) // 列表的总页数
-let userId=route.query.uid;
-const staffs = ref<ScoreStaff[]>([]) // 人员列表的数据
-
-const uniqueDept = computed(() => {
-  return Array.from(
-    new Set(staffs.value.map(staff => staff.department))
-  )
-})
-
-const changeYear = ()=>{
-  exportYear.value= pickYear.value.getFullYear()
-}
-//
-// const changeDept = ()=>{
-//   exportDept.value= pickYear.value.getFullYear()
-// }
-
-
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
-  staffId: userId,
-  staffName: undefined,
   quarter: undefined,
-  year: undefined,
-  category: undefined,
-  item: undefined,
-  points: undefined,
   remark: undefined,
   department: undefined,
-  imagePath: undefined,
+  filePath: undefined,
   createTime: [],
+  year: undefined,
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
@@ -296,9 +194,7 @@ const exportLoading = ref(false) // 导出的加载中
 const getList = async () => {
   loading.value = true
   try {
-    const data = await BehaviorRecordsApi.getBehaviorRecordsPage(queryParams)
-    staffs.value = await ScoreStaffApi.getAllScoreStaff()
-
+    const data = await ScoreFileApi.getScoreFilePage(queryParams)
     list.value = data.list
     total.value = data.total
   } finally {
@@ -330,7 +226,7 @@ const handleDelete = async (id: number) => {
     // 删除的二次确认
     await message.delConfirm()
     // 发起删除
-    await BehaviorRecordsApi.deleteBehaviorRecords(id)
+    await ScoreFileApi.deleteScoreFile(id)
     message.success(t('common.delSuccess'))
     currentRow.value = {}
     // 刷新列表
@@ -338,12 +234,12 @@ const handleDelete = async (id: number) => {
   } catch {}
 }
 
-/** 批量删除行为记录 */
+/** 批量删除文件记录 */
 const handleDeleteBatch = async () => {
   try {
     // 删除的二次确认
     await message.delConfirm()
-    await BehaviorRecordsApi.deleteBehaviorRecordsList(checkedIds.value);
+    await ScoreFileApi.deleteScoreFileList(checkedIds.value);
     checkedIds.value = [];
     message.success(t('common.delSuccess'))
     await getList();
@@ -351,7 +247,7 @@ const handleDeleteBatch = async () => {
 }
 
 const checkedIds = ref<number[]>([])
-const handleRowCheckboxChange = (records: BehaviorRecords[]) => {
+const handleRowCheckboxChange = (records: ScoreFile[]) => {
   checkedIds.value = records.map((item) => item.id!);
 }
 
@@ -359,19 +255,14 @@ const handleRowCheckboxChange = (records: BehaviorRecords[]) => {
 const handleExport = async () => {
   try {
     // 导出的二次确认
-    dialogVisible.value = false
+    await message.exportConfirm()
     // 发起导出
     exportLoading.value = true
-    queryParams.year = exportYear.value
-    queryParams.department = exportDept.value
-    const data = await BehaviorRecordsApi.exportBehaviorRecords(queryParams)
-    // download.excel(data, exportYear.value + '年度'+ exportDept.value + '医德医风统计数据' + '.xlsx')
-    message.success(t('common.applySuccess'))
-
+    const data = await ScoreFileApi.exportScoreFile(queryParams)
+    download.excel(data, '文件记录.xls')
   } catch {
   } finally {
     exportLoading.value = false
-    queryParams.department = null
   }
 }
 

@@ -48,6 +48,7 @@ export default {
     delDataMessage: '是否删除数据？',
     delNoData: '请选择需要删除的数据',
     delSuccess: '删除成功',
+    applySuccess: '请求生成文件成功，请1分钟后到文件管理下载',
     index: '序号',
     status: '状态',
     createTime: '创建时间',
