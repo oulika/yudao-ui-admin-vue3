@@ -8,28 +8,10 @@
       :inline="true"
       label-width="68px"
     >
-      <el-form-item label="季度" prop="quarter">
-        <el-input
-          v-model="queryParams.quarter"
-          placeholder="请输入季度"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input
-          v-model="queryParams.remark"
-          placeholder="请输入备注"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="评审科室" prop="department">
+      <el-form-item label="导出科室" prop="department">
         <el-input
           v-model="queryParams.department"
-          placeholder="请输入评审科室"
+          placeholder="请输入导出科室"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
@@ -109,8 +91,6 @@
     >
     <el-table-column type="selection" width="55" />
       <el-table-column label="编号" align="center" prop="id" />
-      <el-table-column label="季度" align="center" prop="quarter" />
-      <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="评审科室" align="center" prop="department" />
       <el-table-column label="文件路径" align="center" prop="filePath">
 

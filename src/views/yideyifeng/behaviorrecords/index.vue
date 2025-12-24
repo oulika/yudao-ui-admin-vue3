@@ -260,9 +260,13 @@ let userId=route.query.uid;
 const staffs = ref<ScoreStaff[]>([]) // 人员列表的数据
 
 const uniqueDept = computed(() => {
-  return Array.from(
-    new Set(staffs.value.map(staff => staff.department))
-  )
+
+  const departments = staffs.value.map(staff => staff.department);
+  const uniqueDepartments = Array.from(new Set(departments));
+// 过滤掉"护理条线"，然后在其前面添加
+  const filteredDepartments = uniqueDepartments.filter(dept => dept !== '护理条线');
+  const result = ['护理条线', ...filteredDepartments];
+  return result;
 })
 
 const changeYear = ()=>{
