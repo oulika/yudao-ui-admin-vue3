@@ -196,7 +196,7 @@
     :before-close="handleClose"
   >
     <el-row>
-      <el-col :span="12">
+      <el-col>
         <el-date-picker
         v-model="pickYear"
         type="year"
@@ -205,10 +205,29 @@
 
       />
       </el-col>
-      <el-col :span="12">
-        <el-select filterable v-model="exportDept" placeholder="请选择科室">
+    </el-row>
+    <el-row>
+      <el-col>
+        <el-radio-group v-model="exportBy" @change="changeExportBy">
+          <el-radio value="keshi">按科室导出</el-radio>
+          <el-radio value="zhineng">按职务导出</el-radio>
+        </el-radio-group>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="24">
+        <el-select filterable v-model="exportDept" placeholder="请选择科室" :disabled="isKeshiDisabled">
           <el-option
             v-for="dept in uniqueDept"
+            :key="dept"
+            :label="dept"
+            :value="dept"
+
+          />
+        </el-select>
+        <el-select filterable v-model="exportJobs" placeholder="请选择职能" :disabled="isDisabled" multiple>
+          <el-option
+            v-for="dept in uniqueJobs"
             :key="dept"
             :label="dept"
             :value="dept"
@@ -248,12 +267,16 @@ defineOptions({ name: 'BehaviorRecords' })
 const dialogVisible = ref(false)
 const exportYear = ref(2025)
 const exportDept = ref('')
+const exportBy = ref('keshi')
+const exportJobs = ref([])
 const pickYear = ref()
 
 const message = useMessage() // 消息弹窗
 const { t } = useI18n() // 国际化
 
 const loading = ref(true) // 列表的加载中
+const isDisabled = ref(true) // 列表的加载中
+const isKeshiDisabled = ref(false) // 列表的加载中
 const list = ref<BehaviorRecords[]>([]) // 列表的数据
 const total = ref(0) // 列表的总页数
 let userId=route.query.uid;
@@ -269,8 +292,28 @@ const uniqueDept = computed(() => {
   return result;
 })
 
+const uniqueJobs = computed(() => {
+
+  const jobs = staffs.value.map(staff => staff.jobNumber);
+  const uniquejobs = Array.from(new Set(jobs));
+  return uniquejobs;
+})
+
 const changeYear = ()=>{
   exportYear.value= pickYear.value.getFullYear()
+}
+
+const changeExportBy = (value)=>{
+  if (value == 'keshi') {
+    isDisabled.value=true;
+    isKeshiDisabled.value=false
+    exportJobs.value = null;
+  } else {
+    isDisabled.value=false
+    isKeshiDisabled.value=true
+
+    exportDept.value = null;
+  }
 }
 //
 // const changeDept = ()=>{
@@ -290,6 +333,7 @@ const queryParams = reactive({
   points: undefined,
   remark: undefined,
   department: undefined,
+  exportJobs: undefined,
   imagePath: undefined,
   createTime: [],
 })
@@ -368,6 +412,7 @@ const handleExport = async () => {
     exportLoading.value = true
     queryParams.year = exportYear.value
     queryParams.department = exportDept.value
+    queryParams.exportJobs = exportJobs.value
     const data = await BehaviorRecordsApi.exportBehaviorRecords(queryParams)
     // download.excel(data, exportYear.value + '年度'+ exportDept.value + '医德医风统计数据' + '.xlsx')
     message.success(t('common.applySuccess'))
