@@ -11,9 +11,11 @@
         <el-input v-model="formData.name" placeholder="请输入姓名" />
       </el-form-item>
       <el-form-item label="职务" prop="jobNumber">
-        <el-select v-model="formData.jobNumber" placeholder="请输入职务，如科室主任">
-          <el-option label="科室主任" value="1" />
-          <el-option label="科员" value="2" />
+        <el-select v-model="formData.jobNumber" placeholder="请选择员工性质">
+          <el-option label="医疗" value="医疗" />
+          <el-option label="医技" value="医技" />
+          <el-option label="护理" value="护理" />
+          <el-option label="其他" value="其他" />
         </el-select>
       </el-form-item>
       <el-form-item label="部门" prop="department">
