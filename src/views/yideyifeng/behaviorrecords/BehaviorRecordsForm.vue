@@ -247,6 +247,7 @@ const resetForm = () => {
     department: undefined,
     imagePath: undefined,
   }
+  pickYear.value=''
   formRef.value?.resetFields()
 }
 </script>
