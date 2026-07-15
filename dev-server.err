@@ -1,0 +1,22 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vitejs.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+Browserslist: browsers data (caniuse-lite) is 20 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[2m09:15:01[22m [33m[1m[vite][22m[39m [33mwarning: 
+C:\Users\Administrator\IdeaProjects\yudao-ui-admin-vue3\src\views\yideyifeng\behaviorrecords\index.vue
+  150:19  warning  Expected '#default' instead of 'v-slot'  vue/v-slot-style
+
+✖ 1 problem (0 errors, 1 warning)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
+[39m
+  Plugin: [35mvite-plugin-eslint[39m
+  File: [36mC:/Users/Administrator/IdeaProjects/yudao-ui-admin-vue3/src/views/yideyifeng/behaviorrecords/index.vue[39m
+[2m09:15:22[22m [33m[1m[vite][22m[39m [33mwarning: 
+C:\Users\Administrator\IdeaProjects\yudao-ui-admin-vue3\src\views\yideyifeng\scorefile\index.vue
+  97:19  warning  Expected '#default' instead of 'v-slot'  vue/v-slot-style
+
+✖ 1 problem (0 errors, 1 warning)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
+[39m
+  Plugin: [35mvite-plugin-eslint[39m
+  File: [36mC:/Users/Administrator/IdeaProjects/yudao-ui-admin-vue3/src/views/yideyifeng/scorefile/index.vue[39m
