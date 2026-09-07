@@ -2,7 +2,7 @@ import request from '@/config/axios'
 
 export interface ProjectArchiveItem {
   id: number; archiveId: number; itemNo: number; itemName: string; optionValue?: string | string[]
-  status: number; remark?: string; fileUrls?: string | string[]
+  status: number; remark?: string; fileUrls: string | string[]
 }
 export interface ProjectArchive {
   id: number; contractId: number; contractName: string; contractNo: string; year: number
