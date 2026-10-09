@@ -51,4 +51,8 @@ export const ScoreStaffApi = {
   exportScoreStaff: async (params) => {
     return await request.download({ url: `/yideyifeng/score-staff/export-excel`, params })
   },
+
+  getImportTemplate: async () => {
+    return await request.download({ url: `/yideyifeng/score-staff/get-import-template` })
+  },
 }

@@ -103,6 +103,14 @@
           <Icon icon="ep:plus" class="mr-5px" /> 新增
         </el-button>
         <el-button
+          type="warning"
+          plain
+          @click="importFormRef.open()"
+          v-hasPermi="['yideyifeng:behavior-records:import']"
+        >
+          <Icon icon="ep:upload" class="mr-5px" /> 导入
+        </el-button>
+        <el-button
           type="success"
           plain
           @click="dialogVisible=true"
@@ -250,6 +258,7 @@
   </el-dialog>
   <!-- 表单弹窗：添加/修改 -->
   <BehaviorRecordsForm ref="formRef" @success="getList" />
+  <BehaviorRecordsImportForm ref="importFormRef" @success="getList" />
 </template>
 
 <script setup lang="ts">
@@ -260,6 +269,7 @@ import { BehaviorRecordsApi, BehaviorRecords } from '@/api/yideyifeng/behaviorre
 import { ScoreStaffApi, ScoreStaff } from '@/api/yideyifeng/scorestaff'
 import { ScoreTemplateApi, ScoreTemplate } from '@/api/yideyifeng/scoretemplate'
 import BehaviorRecordsForm from './BehaviorRecordsForm.vue'
+import BehaviorRecordsImportForm from './BehaviorRecordsImportForm.vue'
 const route = useRoute()
 /** 行为记录 列表 */
 defineOptions({ name: 'BehaviorRecords' })
@@ -339,6 +349,7 @@ const queryParams = reactive({
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
+const importFormRef = ref()
 
 /** 查询列表 */
 const getList = async () => {

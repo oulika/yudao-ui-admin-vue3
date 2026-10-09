@@ -57,4 +57,8 @@ export const BehaviorRecordsApi = {
   exportBehaviorRecords: async (params) => {
     return await request.download({ url: `/yideyifeng/behavior-records/export/export-excel-dept`, params })
   },
+
+  getImportTemplate: async () => {
+    return await request.download({ url: `/yideyifeng/behavior-records/get-import-template` })
+  },
 }

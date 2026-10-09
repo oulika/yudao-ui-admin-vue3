@@ -67,6 +67,14 @@
           <Icon icon="ep:plus" class="mr-5px" /> 新增
         </el-button>
         <el-button
+          type="warning"
+          plain
+          @click="importFormRef.open()"
+          v-hasPermi="['yideyifeng:score-staff:import']"
+        >
+          <Icon icon="ep:upload" class="mr-5px" /> 导入
+        </el-button>
+        <el-button
           type="success"
           plain
           @click="handleExport"
@@ -151,6 +159,7 @@
 
   <!-- 表单弹窗：添加/修改 -->
   <ScoreStaffForm ref="formRef" @success="getList" />
+  <ScoreStaffImportForm ref="importFormRef" @success="getList" />
 </template>
 
 <script setup lang="ts">
@@ -159,6 +168,7 @@ import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
 import { ScoreStaffApi, ScoreStaff } from '@/api/yideyifeng/scorestaff'
 import ScoreStaffForm from './ScoreStaffForm.vue'
+import ScoreStaffImportForm from './ScoreStaffImportForm.vue'
 const { push, replace } = useRouter()
 
 /** 员工信息 列表 */
@@ -181,6 +191,7 @@ const queryParams = reactive({
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
+const importFormRef = ref()
 
 /** 查询列表 */
 const getList = async () => {
