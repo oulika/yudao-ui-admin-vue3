@@ -9,7 +9,7 @@
       <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
       <template #tip>
         <div class="el-upload__tip text-center">
-          <span>工号、姓名及评分项目必须与系统基础数据一致。</span>
+          <span>姓名、员工科室及评分项目必须与系统基础数据一致。</span>
           <el-link type="primary" :underline="false" @click="downloadTemplate">下载模板</el-link>
         </div>
       </template>
