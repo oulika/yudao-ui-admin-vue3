@@ -8,7 +8,9 @@
       v-loading="formLoading"
     >
       <el-form-item label="分类" prop="category">
-        <el-input v-model="formData.category" placeholder="请输入分类" />
+        <el-select v-model="formData.category" filterable placeholder="请选择分类" class="!w-100%">
+          <el-option v-for="category in categories" :key="category" :label="category" :value="category" />
+        </el-select>
       </el-form-item>
       <el-form-item label="项目" prop="item">
         <el-input v-model="formData.item" placeholder="请输入项目" />
@@ -49,6 +51,7 @@ const formData = ref({
 const formRules = reactive({
 })
 const formRef = ref() // 表单 Ref
+const categories = ref<string[]>([])
 
 /** 打开弹窗 */
 const open = async (type: string, id?: number) => {
@@ -56,6 +59,8 @@ const open = async (type: string, id?: number) => {
   dialogTitle.value = t('action.' + type)
   formType.value = type
   resetForm()
+  const templates = await ScoreTemplateApi.getAllScoreTemplate()
+  categories.value = [...new Set(templates.map((item) => item.category).filter(Boolean))].sort()
   // 修改时，设置数据
   if (id) {
     formLoading.value = true
