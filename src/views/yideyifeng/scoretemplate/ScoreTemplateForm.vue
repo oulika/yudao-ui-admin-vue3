@@ -59,7 +59,7 @@ const open = async (type: string, id?: number) => {
   dialogTitle.value = t('action.' + type)
   formType.value = type
   resetForm()
-  const templates = await ScoreTemplateApi.getAllScoreTemplate()
+  const templates = (await ScoreTemplateApi.getAllScoreTemplate()) as ScoreTemplate[]
   categories.value = [...new Set(templates.map((item) => item.category).filter(Boolean))].sort()
   // 修改时，设置数据
   if (id) {
