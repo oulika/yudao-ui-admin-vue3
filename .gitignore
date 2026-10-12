@@ -7,3 +7,9 @@ pnpm-debug
 auto-*.d.ts
 .idea
 .history
+
+# Local logs and temporary files
+*.log
+*.err
+*.out
+.tmp-*
