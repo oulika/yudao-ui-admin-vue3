@@ -1,71 +1,13 @@
 <template>
-  <ContentWrap>
-    <el-form class="-mb-15px" :model="queryParams" ref="queryFormRef" :inline="true" label-width="68px">
-      <el-form-item label="调查ID" prop="surveyId">
-        <el-input v-model="queryParams.surveyId" placeholder="请输入调查ID" clearable @keyup.enter="handleQuery" class="!w-240px" />
-      </el-form-item>
-      <el-form-item label="科室" prop="department">
-        <el-input v-model="queryParams.department" placeholder="请输入科室" clearable @keyup.enter="handleQuery" class="!w-240px" />
-      </el-form-item>
-      <el-form-item>
-        <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
-        <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
-      </el-form-item>
-    </el-form>
-  </ContentWrap>
-
-  <ContentWrap>
-    <el-table row-key="id" v-loading="loading" :data="list" :stripe="true" :show-overflow-tooltip="true">
-      <el-table-column label="编号" align="center" prop="id" width="60" />
-      <el-table-column label="被评价员工" align="center" prop="staffName" />
-      <el-table-column label="科室" align="center" prop="department" />
-      <el-table-column label="满意度得分" align="center" prop="score" />
-      <el-table-column label="评价人类型" align="center" prop="respondentType" />
-      <el-table-column label="提交时间" align="center" prop="submitTime" width="160" />
-    </el-table>
-    <Pagination :total="total" v-model:page="queryParams.pageNo" v-model:limit="queryParams.pageSize" @pagination="getList" />
-  </ContentWrap>
+  <ContentWrap><el-form ref="queryRef" :model="query" inline><el-form-item label="调查" prop="surveyId"><el-select v-model="query.surveyId" clearable filterable class="!w-240px"><el-option v-for="survey in surveys" :key="survey.id" :label="survey.title" :value="survey.id" /></el-select></el-form-item><el-form-item label="科室" prop="department"><el-input v-model="query.department" clearable /></el-form-item><el-form-item label="低分阈值"><el-input-number v-model="lowScoreThreshold" :min="0" :max="100" /></el-form-item><el-form-item><el-button @click="load">查询</el-button><el-button @click="reset">重置</el-button><el-button type="primary" @click="importRef.open()">导入结果</el-button><el-button @click="loadStatistics">统计</el-button><el-button @click="exportResults">导出</el-button></el-form-item></el-form></ContentWrap>
+  <ContentWrap v-if="statistics"><el-row :gutter="12"><el-col v-for="item in statItems" :key="item.label" :span="4"><el-statistic :title="item.label" :value="item.value" /></el-col></el-row><el-table class="mt-16px" :data="statistics.departmentStats" size="small"><el-table-column label="科室" prop="department" /><el-table-column label="样本数" prop="sampleCount" /><el-table-column label="平均分" prop="averageScore" /></el-table></ContentWrap>
+  <ContentWrap><el-table v-loading="loading" :data="list" stripe><el-table-column label="调查" min-width="160"><template #default="{row}">{{ surveyName(row.surveyId) }}</template></el-table-column><el-table-column label="被评价员工" prop="staffName" /><el-table-column label="科室" prop="department" /><el-table-column label="得分" prop="score" width="90" /><el-table-column label="评价人类型" prop="respondentType" /><el-table-column label="外部记录编号" prop="externalRecordNo" /><el-table-column label="提交时间" prop="submitTime" width="180" /><el-table-column label="操作" width="100"><template #default="{row}"><el-button v-if="row.importBatchNo" link type="danger" @click="rollback(row.importBatchNo)">撤销批次</el-button></template></el-table-column></el-table><Pagination :total="total" v-model:page="query.pageNo" v-model:limit="query.pageSize" @pagination="load" /></ContentWrap>
+  <ResultImportForm ref="importRef" @success="handleImportSuccess" />
 </template>
-
 <script setup lang="ts">
-import { SatisfactionResultApi, SatisfactionResultStat } from '@/api/yideyifeng/satisfaction/result'
-
-/** 满意度结果统计 列表 */
-defineOptions({ name: 'SatisfactionResult' })
-
-const loading = ref(true)
-const list = ref<SatisfactionResultStat[]>([])
-const total = ref(0)
-const queryParams = reactive({
-  pageNo: 1,
-  pageSize: 10,
-  surveyId: undefined,
-  department: undefined,
-})
-const queryFormRef = ref()
-
-const getList = async () => {
-  loading.value = true
-  try {
-    const data = await SatisfactionResultApi.getPage(queryParams)
-    list.value = data.list
-    total.value = data.total
-  } finally {
-    loading.value = false
-  }
-}
-
-const handleQuery = () => {
-  queryParams.pageNo = 1
-  getList()
-}
-
-const resetQuery = () => {
-  queryFormRef.value.resetFields()
-  handleQuery()
-}
-
-onMounted(() => {
-  getList()
-})
+import { SatisfactionResultApi,type SatisfactionResultStat } from '@/api/yideyifeng/satisfaction/result';import { SatisfactionSurveyApi,type SatisfactionSurvey } from '@/api/yideyifeng/satisfaction/survey';import ResultImportForm from './ResultImportForm.vue';import download from '@/utils/download'
+const message=useMessage(),loading=ref(false),list=ref<SatisfactionResultStat[]>([]),surveys=ref<SatisfactionSurvey[]>([]),total=ref(0),queryRef=ref(),importRef=ref(),statistics=ref<any>(),lowScoreThreshold=ref(80);const query=reactive({pageNo:1,pageSize:10,surveyId:undefined as number|undefined,department:undefined});const surveyName=(id:number)=>surveys.value.find(item=>item.id===id)?.title||String(id)
+const load=async()=>{loading.value=true;try{const data=await SatisfactionResultApi.getPage(query);list.value=data.list;total.value=data.total}finally{loading.value=false}};const loadSurveys=async()=>{const data=await SatisfactionSurveyApi.getPage({pageNo:1,pageSize:100});surveys.value=data.list};const loadStatistics=async()=>{statistics.value=await SatisfactionResultApi.getStatistics({surveyId:query.surveyId,lowScoreThreshold:lowScoreThreshold.value})}
+const statItems=computed(()=>statistics.value?[{label:'有效样本',value:statistics.value.sampleCount},{label:'平均分',value:statistics.value.averageScore},{label:'最高分',value:statistics.value.highestScore},{label:'最低分',value:statistics.value.lowestScore},{label:'低分记录',value:statistics.value.lowScoreCount}]:[])
+const reset=()=>{queryRef.value.resetFields();statistics.value=undefined;load()};const rollback=async(batchNo:string)=>{await message.confirm('确认撤销该批次导入的全部结果吗？');const count=await SatisfactionResultApi.rollbackImport(batchNo);message.success(`已撤销 ${count} 条记录`);await load();if(statistics.value)await loadStatistics()};const exportResults=async()=>download.excel(await SatisfactionResultApi.exportResults(query.surveyId),'满意度结果.xlsx');const handleImportSuccess=async()=>{await load();if(statistics.value)await loadStatistics()};onMounted(()=>{load();loadSurveys()})
 </script>

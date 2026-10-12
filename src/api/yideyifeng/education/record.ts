@@ -1,32 +1,32 @@
 import request from '@/config/axios'
-import type { Dayjs } from 'dayjs'
 
-/** 学习记录信息 */
 export interface EducationRecord {
-  id: number; // 编号
-  taskId: number; // 任务ID
-  staffId: number; // 员工ID
-  staffName: string; // 员工姓名
-  department: string; // 科室
-  status: number; // 状态：0未参加/1已参加/2已缺席/3考试不合格/4考试合格
-  score: number; // 考试分数
-  signTime: string; // 签到时间
+  id: number
+  taskId: number
+  staffId: number
+  staffName: string
+  department: string
+  status: number
+  score: number
+  signTime: string
+  completeTime?: string
+  importBatchNo?: string
+  remark?: string
 }
 
-// 学习记录 API
 export const EducationRecordApi = {
-  // 查询学习记录分页
-  getPage: async (params: any) => {
-    return await request.get({ url: `/yideyifeng/education-record/page`, params })
-  },
-
-  // 签到
-  sign: async (id: number) => {
-    return await request.post({ url: `/yideyifeng/education-record/sign?id=` + id })
-  },
-
-  // 修改学习记录
-  update: async (data: EducationRecord) => {
-    return await request.put({ url: `/yideyifeng/education-record/update`, data })
-  },
+  getPage: async (params: any) =>
+    request.get({ url: '/yideyifeng/education-record/page', params }),
+  sign: async (id: number) =>
+    request.post({ url: `/yideyifeng/education-record/sign?id=${id}` }),
+  update: async (data: EducationRecord) =>
+    request.put({ url: '/yideyifeng/education-record/update', data }),
+  getImportTemplate: async () =>
+    request.download({ url: '/yideyifeng/education-record/get-import-template' }),
+  rollbackImport: async (batchNo: string) =>
+    request.delete({ url: '/yideyifeng/education-record/rollback-import', params: { batchNo } }),
+  getStatistics: async (taskId: number) =>
+    request.get({ url: '/yideyifeng/education-record/statistics', params: { taskId } }),
+  exportRecords: async (taskId: number) =>
+    request.download({ url: '/yideyifeng/education-record/export', params: { taskId } })
 }

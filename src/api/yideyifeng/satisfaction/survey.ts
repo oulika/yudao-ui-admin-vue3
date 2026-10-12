@@ -1,8 +1,10 @@
 import request from '@/config/axios'
-import type { Dayjs } from 'dayjs'
 
 /** 满意度调查信息 */
 export interface SatisfactionSurvey {
+  externalPlatform?: string
+  questionnaireUrl?: string
+  remark?: string
   id: number; // 编号
   title: string; // 调查标题
   year: number; // 年度
@@ -59,6 +61,14 @@ export const SatisfactionSurveyApi = {
   // 删除满意度调查
   delete: async (id: number) => {
     return await request.delete({ url: `/yideyifeng/satisfaction-survey/delete?id=` + id })
+  },
+
+  copy: async (id: number) => {
+    return await request.post({ url: `/yideyifeng/satisfaction-survey/copy?id=${id}` })
+  },
+
+  updateStatus: async (id: number, status: number) => {
+    return await request.put({ url: `/yideyifeng/satisfaction-survey/status?id=${id}&status=${status}` })
   },
 }
 
