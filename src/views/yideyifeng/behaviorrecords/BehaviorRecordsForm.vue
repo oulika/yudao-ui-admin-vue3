@@ -9,15 +9,27 @@
     >
 
       <el-form-item label="员工ID" prop="staffId">
-        <el-select filterable v-model="formData.staffId" placeholder="请选择员工" @change="handleStaffChange">
+        <el-select
+          v-model="formData.staffId"
+          filterable
+          :multiple="formType === 'create'"
+          collapse-tags
+          collapse-tags-tooltip
+          :reserve-keyword="false"
+          placeholder="请选择员工"
+          @change="handleStaffChange"
+        >
           <el-option
             v-for="staff in staffs"
             :key="staff.id"
-            :label="staff.name"
+            :label="`${staff.name}（${staff.department}）`"
             :value="staff.id"
 
           />
         </el-select>
+      </el-form-item>
+      <el-form-item v-if="formType === 'create' && selectedStaffNames.length" label="已选员工">
+        <span>{{ selectedStaffNames.join('、') }}</span>
       </el-form-item>
       <el-form-item label="年度" prop="year">
         <el-date-picker
@@ -107,7 +119,19 @@ const dialogTitle = ref('') // 弹窗的标题
 const formLoading = ref(false) // 表单的加载中：1）修改时的数据加载；2）提交的按钮禁用
 const formType = ref('') // 表单的类型：create - 新增；update - 修改
 const pickYear = ref({})
-const formData = ref({
+const formData = ref<{
+  id?: number
+  staffId?: number | number[]
+  staffName?: string
+  quarter?: number
+  year?: number
+  category?: string
+  item?: string
+  points?: number
+  remark?: string
+  department?: string
+  imagePath?: string[]
+}>({
   id: undefined,
   staffId: undefined,
   staffName: undefined,
@@ -125,6 +149,7 @@ const changeYear = ()=>{
   formData.value.year= pickYear.value.getFullYear()
 }
 const formRules = reactive({
+  staffId: [{ required: true, message: '请选择员工', trigger: 'change' }]
 })
 const formRef = ref() // 表单 Ref
 const staffs = ref<ScoreStaff[]>([]) // 人员列表的数据
@@ -134,6 +159,18 @@ const rawData = ref<ScoreTemplate[]>([])
 // 响应式数据
 const selectedTemplate: Ref<string> = ref('')
 
+const selectedStaffNames = computed(() => {
+  if (!Array.isArray(formData.value.staffId)) {
+    return []
+  }
+  return formData.value.staffId
+    .map(staffId => {
+      const staff = staffs.value.find(item => item.id === staffId)
+      return staff ? `${staff.name}（${staff.department}）` : undefined
+    })
+    .filter((name): name is string => Boolean(name))
+})
+
 const handleCategoryChange = (category: string) => {
   if (category) {
     formData.item = null
@@ -141,9 +178,13 @@ const handleCategoryChange = (category: string) => {
   }
 };
 
-const handleStaffChange = (staffId: number) =>{
-  const staff = staffs.value.find(t => t.id === formData.value.staffId)
-  formData.value.staffName=staff.name
+const handleStaffChange = (staffId: number | number[]) =>{
+  if (Array.isArray(staffId)) {
+    formData.value.staffName = undefined
+    return
+  }
+  const staff = staffs.value.find(t => t.id === staffId)
+  formData.value.staffName = staff?.name
 
 }
 
@@ -218,12 +259,36 @@ const submitForm = async () => {
   // 提交请求
   formLoading.value = true
   try {
-    const data = formData.value as unknown as BehaviorRecords
     if (formType.value === 'create') {
-      await BehaviorRecordsApi.createBehaviorRecords(data)
-      message.success(t('common.createSuccess'))
+      const staffIds = formData.value.staffId as number[]
+      const failedStaffIds: number[] = []
+      let successCount = 0
+      for (const staffId of staffIds) {
+        const staff = staffs.value.find(item => item.id === staffId)
+        if (!staff) {
+          failedStaffIds.push(staffId)
+          continue
+        }
+        try {
+          await BehaviorRecordsApi.createBehaviorRecords({
+            ...formData.value,
+            staffId: staff.id,
+            staffName: staff.name
+          } as unknown as BehaviorRecords)
+          successCount++
+        } catch {
+          failedStaffIds.push(staffId)
+        }
+      }
+      if (failedStaffIds.length > 0) {
+        formData.value.staffId = failedStaffIds
+        message.warning(`成功新增 ${successCount} 条，失败 ${failedStaffIds.length} 条，请重试失败员工`)
+        if (successCount > 0) emit('success')
+        return
+      }
+      message.success(`成功新增 ${successCount} 条行为记录`)
     } else {
-      await BehaviorRecordsApi.updateBehaviorRecords(data)
+      await BehaviorRecordsApi.updateBehaviorRecords(formData.value as unknown as BehaviorRecords)
       message.success(t('common.updateSuccess'))
     }
     dialogVisible.value = false
