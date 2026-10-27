@@ -1,13 +1,13 @@
 import request from '@/config/axios'
 
 export interface Contract {
-  id?: number; contractName: string; contractNo: string; department?: string; counterparty?: string
+  id?: number; contractName: string; contractNo: string; actualContractNo?: string; department?: string; counterparty?: string
   amount?: number; startDate: string; endDate: string; status?: number; fileUrls?: string | string[]
   smsNotify?: boolean; oaNotify?: boolean; oaWorkflowNo?: string; oaWorkflowTitle?: string
   oaWorkflowStatus?: string; oaCurrentNode?: string; oaLastSyncTime?: string; oaWorkflowUrl?: string; maintenanceCycle?: number; customCycleDays?: number
   nextMaintenanceDate?: string; maintenanceRemindDays?: number; expireRemindDays?: number
   maintenanceMaterialRequirement?: string; maintenanceFileUrls?: string | string[]; lastMaintenanceTime?: string
-  maintenanceStatus?: number; remark?: string; oaWorkflowCount?: number; oaWorkflowSummary?: string
+  maintenanceStatus?: number; maintenanceNoticePerson?: string | string[]; smsNotifyMobiles?: string | string[]; remark?: string; oaWorkflowCount?: number; oaWorkflowSummary?: string
 }
 export interface ContractTimeline { id: number; eventType: string; eventTitle: string; eventContent?: string; operatorName?: string; eventTime: string; fileUrls?: string }
 export interface ContractOaWorkflow {
@@ -24,7 +24,9 @@ const serializeFileUrls = (value?: string | string[]) => Array.isArray(value) ? 
 const serializeContract = (data: Contract) => ({
   ...data,
   fileUrls: serializeFileUrls(data.fileUrls),
-  maintenanceFileUrls: serializeFileUrls(data.maintenanceFileUrls)
+  maintenanceFileUrls: serializeFileUrls(data.maintenanceFileUrls),
+  smsNotifyMobiles: serializeFileUrls(data.smsNotifyMobiles),
+  maintenanceNoticePerson: serializeFileUrls(data.maintenanceNoticePerson)
 })
 
 export const ContractApi = {

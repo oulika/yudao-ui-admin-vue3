@@ -112,7 +112,7 @@ const beforeUpload: UploadProps['beforeUpload'] = (file: UploadRawFile) => {
     if (file.type.indexOf(type) > -1) return true
     return !!(fileExtension && fileExtension.indexOf(type) > -1)
   })
-  const isLimit = file.size < props.fileSize * 1024 * 1024
+  const isLimit = file.size <= props.fileSize * 1024 * 1024
   if (!isImg) {
     message.error(`文件格式不正确, 请上传${props.fileType.join('/')}格式!`)
     return false

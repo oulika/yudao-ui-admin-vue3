@@ -3,8 +3,8 @@
     <el-tabs v-model="activeTab">
       <el-tab-pane label="合同概况" name="basic">
     <el-descriptions v-if="contract" :column="2" border>
-      <el-descriptions-item label="合同名称">{{contract.contractName}}</el-descriptions-item><el-descriptions-item label="合同编号">{{contract.contractNo}}</el-descriptions-item>
-      <el-descriptions-item label="相对方">{{contract.counterparty || '-'}}</el-descriptions-item><el-descriptions-item label="合同金额">{{contract.amount ?? '-'}}</el-descriptions-item>
+      <el-descriptions-item label="合同名称">{{contract.contractName}}</el-descriptions-item><el-descriptions-item label="项目编号">{{contract.contractNo}}</el-descriptions-item><el-descriptions-item label="合同编号">{{contract.actualContractNo || '-'}}</el-descriptions-item>
+      <el-descriptions-item label="乙方公司名称">{{contract.counterparty || '-'}}</el-descriptions-item><el-descriptions-item label="合同金额">{{contract.amount ?? '-'}}</el-descriptions-item><el-descriptions-item label="备注" :span="2">{{contract.remark || '-'}}</el-descriptions-item>
       <el-descriptions-item label="合同期限">{{contract.startDate}} 至 {{contract.endDate}}</el-descriptions-item><el-descriptions-item label="OA流程数">{{contract.oaWorkflowCount || 0}}</el-descriptions-item>
       <el-descriptions-item v-if="contract.maintenanceCycle" label="维护周期">{{cycleText(contract.maintenanceCycle)}}</el-descriptions-item><el-descriptions-item v-if="contract.maintenanceCycle" label="下次维护">{{contract.nextMaintenanceDate || '-'}}</el-descriptions-item>
     </el-descriptions>
